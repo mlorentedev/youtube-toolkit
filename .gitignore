@@ -1,0 +1,20 @@
+.env
+GEMINI.md
+channels.yml
+.cache_ggshield
+
+# Python
+__pycache__/
+*.pyc
+*.egg-info/
+.pytest_cache/
+.venv/
+.cache/
+
+# Generated files
+output/
+*.log
+
+# Editor backup files
+*~
+*.swp

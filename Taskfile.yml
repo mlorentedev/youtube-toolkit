@@ -1,0 +1,61 @@
+version: '3'
+
+vars:
+  PROJECT_ROOT: '{{.TASKFILE_DIR}}/..'
+  DOTFILES: '{{.PROJECT_ROOT}}/dotfiles'
+
+env:
+  POETRY_VIRTUALENVS_IN_PROJECT: "true"
+  POETRY_CACHE_DIR: ".cache/pypoetry"
+
+tasks:
+  install:
+    desc: Install project dependencies via Poetry
+    cmds:
+      - |
+        source "{{.DOTFILES}}/scripts/utils.sh"
+        log_info "Installing project dependencies via Poetry..."
+        poetry install --sync --no-root
+        log_success "Dependencies installed successfully"
+
+  run:channels:
+    desc: Run the YouTube channel scraper and generate CSV, channel stats, engagement trends, best videos, and latest videos reports
+    deps: [install]
+    dotenv: ['.env']
+    preconditions:
+      - sh: '[ -f .env ]'
+        msg: "Missing .env file. Copy the template and configure YOUTUBE_API_KEY."
+      - sh: '[ -n "${YOUTUBE_API_KEY}" ] && [ "${YOUTUBE_API_KEY}" != "your-youtube-api-key" ]'
+        msg: "Set a valid YOUTUBE_API_KEY in .env before running the scraper."
+    cmds:
+      - |
+        source "{{.DOTFILES}}/scripts/utils.sh"
+        log_info "Running YouTube channel scraper..."
+        poetry run python src/main.py channels --max-results ${MAX_RESULTS:-50} --output-dir ./output
+        log_success "Channel scraping completed"
+
+  run:video:
+    desc: Download transcript for a single video (video_id is read from .env or can be passed as argument)
+    deps: [install]
+    dotenv: ['.env']
+    cmds:
+      - |
+        source "{{.DOTFILES}}/scripts/utils.sh"
+        log_info "Downloading video transcript..."
+        poetry run python src/main.py video --langs ${YT_LANGS:-es,en} --output-dir ./output
+        log_success "Video transcript download completed"
+
+  update:
+    desc: Update locked dependencies
+    cmds:
+      - |
+        source "{{.DOTFILES}}/scripts/utils.sh"
+        log_info "Updating locked dependencies..."
+        poetry update
+        log_success "Dependencies updated successfully"
+
+  shell:
+    desc: Spawn a Poetry-managed shell for ad-hoc commands
+    cmds:
+      - poetry shell
+    silent: true

@@ -1,0 +1,19 @@
+[tool.poetry]
+name = "youtube-tools"
+version = "0.1.0"
+description = "YouTube channel analyzer & transcript downloader"
+authors = ["Manu <info@mlorente.dev>"]
+
+[tool.poetry.dependencies]
+python = ">=3.12,<3.14"
+google-api-python-client = "^2.112.0"
+google-auth-oauthlib = "^1.2.0"
+youtube-transcript-api = "^1.2.2"
+PyYAML = "^6.0"
+
+[tool.poetry.scripts]
+youtube-tools = "src.main:main"
+
+[build-system]
+requires = ["poetry-core"]
+build-backend = "poetry.core.masonry.api"
