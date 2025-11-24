@@ -31,7 +31,7 @@ tasks:
       - |
         source "{{.DOTFILES}}/scripts/utils.sh"
         log_info "Running YouTube channel scraper..."
-        poetry run python src/main.py channels --max-results ${MAX_RESULTS:-50} --output-dir ./output
+        poetry run python -m src.main channels --max-results ${MAX_RESULTS:-50} --output-dir ./output
         log_success "Channel scraping completed"
 
   run:video:
@@ -42,7 +42,7 @@ tasks:
       - |
         source "{{.DOTFILES}}/scripts/utils.sh"
         log_info "Downloading video transcript..."
-        poetry run python src/main.py video --langs ${YT_LANGS:-es,en} --output-dir ./output
+        poetry run python -m src.main video --langs ${YT_LANGS:-es,en} --output-dir ./output
         log_success "Video transcript download completed"
 
   update:

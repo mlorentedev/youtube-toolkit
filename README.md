@@ -1,131 +1,133 @@
-# YouTube Channel Scraper and Analyzer
+# YouTube Toolkit
 
-This project is a Python-based command-line interface (CLI) application designed to analyze YouTube channels and download video transcripts. It leverages the YouTube Data API v3 to gather channel statistics and video details, and the `youtube-transcript-api` to fetch video transcripts.
+A Python CLI application for analyzing YouTube channels and downloading video transcripts. Built with a modular architecture for maintainability and extensibility.
 
 ## Features
 
-* **Channel Analysis:** Analyze a list of YouTube channels to gather statistics and video details.
-* **Engagement Metrics:** Calculate various engagement metrics for videos.
-* **Data Export:** Export channel and video data to CSV, detailed channel statistics reports, comprehensive engagement trends analysis, and reports for best/latest videos.
-* **Transcript Downloader:** Download transcripts for individual YouTube videos.
+* **Channel Analysis:** Analyze multiple YouTube channels simultaneously
+* **API Key Validation:** Validates YouTube API key before operations with helpful error messages
+* **Comprehensive Metrics:** Engagement rates, view rates, performance distribution
+* **Multiple Export Formats:** CSV data, detailed TXT reports, URL lists
+* **Transcript Downloader:** Multi-language support with automatic fallback
+* **Self-Documenting Output:** Each analysis generates a README explaining all files
 
-## Setup
+## Quick Start
 
 ### Prerequisites
 
-Before you begin, ensure you have the following installed:
-
-* **Python 3.12+**: [Download Python](https://www.python.org/downloads/)
-* **Poetry**: A dependency management and packaging tool for Python.
-
-    ```bash
-    pip install poetry
-    ```
-
-* **Task (Taskfile)**: A task runner / build tool.
-
-    ```bash
-    go install github.com/go-task/task/v3/cmd/task@latest
-    ```
-
-* **YouTube Data API Key**: You'll need an API key from the Google Cloud Console to access the YouTube Data API. [Get your API Key](https://developers.google.com/youtube/v3/getting-started)
+* **Python 3.12+**
+* **Poetry** - `pip install poetry`
+* **Task (Taskfile)** - `go install github.com/go-task/task/v3/cmd/task@latest`
+* **YouTube Data API Key** - [Get API Key](https://developers.google.com/youtube/v3/getting-started)
 
 ### Installation
 
-1. **Clone the repository:**
-
-    ```bash
-    git clone https://github.com/your-repo/youtube-channel-scrapper.git
-    cd youtube-channel-scrapper
-    ```
-
-2. **Install dependencies using Poetry:**
-
-    ```bash
-    task install
-    ```
-
-## Configuration
-
-### Environment Variables (`.env`)
-
-Create a `.env` file in the root of the project by copying `.env.example` (if it exists) or creating one manually. This file should contain your `YOUTUBE_API_KEY` and can also specify `VIDEO_ID`, `MAX_RESULTS_PER_CHANNEL`, `OUTPUT_DIR`, and `YOUTUBE_TRANSCRIPT_FIXTURES_DIR`.
-
-Example `.env` file:
-
-```ini
-# .env
-YOUTUBE_API_KEY=your-youtube-api-key
-VIDEO_ID=tLkRAqmAEtE # Default video ID for transcript download
-MAX_RESULTS_PER_CHANNEL=100
-OUTPUT_DIR=./output
-YOUTUBE_TRANSCRIPT_FIXTURES_DIR=./fixtures/transcripts
+```bash
+git clone <repository-url>
+cd youtube-toolkit
+task install
 ```
 
-### `channels.yml`
+### Configuration
 
-The list of YouTube channels to analyze is defined in `channels.yml`. This file should contain a YAML list of dictionaries, where each dictionary specifies a channel using either `channel_id`, `username`, or `custom_url`.
+Create `.env` file:
 
-Example `channels.yml`:
+```ini
+# Required
+YOUTUBE_API_KEY=your-youtube-api-key-here
+
+# Optional
+MAX_RESULTS_PER_CHANNEL=100
+OUTPUT_DIR=./output
+VIDEO_ID=dQw4w9WgXcQ
+```
+
+Create `channels.yml`:
 
 ```yaml
+- custom_url: "@technotim"
 - custom_url: "@christianlempa"
-- custom_url: "@iximiuz"
-- custom_url: "@mischavandenburg"
-# Add more channels as needed
+- channel_id: "UCxxxxxxxxxxxxxx"
 ```
 
 ## Usage
 
-All commands are run using `task`.
-
-### Analyze YouTube Channels
-
-This command analyzes the channels listed in `channels.yml`, fetches their videos, calculates engagement metrics, and generates several reports in the `output/` directory:
-
-* `youtube_channels_videos_<timestamp>.csv`: Raw video data in CSV format.
-* `youtube_channel_stats_<timestamp>.txt`: Detailed statistics for each channel.
-* `youtube_engagement_trends_<timestamp>.txt`: Comprehensive engagement trends analysis.
-* `youtube_best_videos_<timestamp>.txt`: URLs of the 15 best videos (by engagement rate) for each channel.
-* `youtube_latest_videos_<timestamp>.txt`: URLs of the 15 latest videos for each channel.
+### Analyze Channels
 
 ```bash
 task run:channels
 ```
 
-You can override `MAX_RESULTS_PER_CHANNEL` and `OUTPUT_DIR` by setting them in your `.env` file or as environment variables.
+Generates timestamped reports in `output/<timestamp>/`:
+* **README.md** - Explains all generated files
+* **CSV** - Raw data with all metrics
+* **Channel Stats** - Per-channel detailed analysis (top 5 videos)
+* **Engagement Trends** - Cross-channel comparisons
+* **Best Videos** - Top 15 by engagement (URLs)
+* **Latest Videos** - 15 most recent (URLs)
 
-### Download a Video Transcript
+Each analysis run creates a separate timestamped folder (e.g., `output/20231123_143022/`) to keep results organized.
 
-This command downloads the transcript for a single YouTube video. By default, it uses the `VIDEO_ID` from your `.env` file, but you can provide the `video_id` as an argument.
-
-```bash
-# Download transcript for a specific video ID
-poetry run python src/main.py video <video_id> --langs en,es --output-dir ./output
-```
-
-You can also run the default video (if defined in `main.py`) using `task`:
+### Download Transcript
 
 ```bash
 task run:video
+
+# Or specify video ID
+poetry run python -m src.main video <video_id> --langs en,es
 ```
 
-You can specify preferred languages using the `YT_LANGS` environment variable (e.g., `YT_LANGS=en,fr task run:video`).
+## Engagement Metrics
+
+| Metric | Formula | Use Case |
+|--------|---------|----------|
+| Engagement Rate (Views) | `(likes + comments) / views × 100` | Audience interaction |
+| View Rate | `views / subscribers × 100` | Viral potential (>100%) |
+| Like Rate | `likes / views × 100` | Content satisfaction |
+| Comment Rate | `comments / views × 100` | Discussion level |
+
+## Project Structure
+
+```
+src/
+├── main.py          # CLI entry point
+├── config.py        # Configuration & constants
+├── metrics.py       # Engagement calculations
+├── transcript.py    # Transcript downloader
+├── analyzer.py      # YouTube API wrapper
+└── exporters.py     # Report generators
+```
+
+### Key Design Principles
+
+* Type hints throughout for IDE support
+* Runtime validation with clear error messages
+* Modular architecture for maintainability
+* Batch API processing (50 videos per request)
 
 ## Development
 
-### Update Dependencies
-
-To update the project's dependencies:
-
 ```bash
+# Update dependencies
 task update
-```
 
-### Poetry Shell
-
-To spawn a Poetry-managed shell for ad-hoc commands:
-
-```bash
+# Poetry shell
 task shell
+
+# Run in development
+poetry run python -m src.main channels --help
 ```
+
+## Environment Variables Reference
+
+| Variable | Required | Default | Description |
+|----------|----------|---------|-------------|
+| `YOUTUBE_API_KEY` | ✅ | - | YouTube Data API v3 key |
+| `MAX_RESULTS_PER_CHANNEL` | No | `50` | Videos per channel |
+| `OUTPUT_DIR` | No | `./output` | Report output directory |
+| `VIDEO_ID` | No | - | Default video for transcripts |
+| `YOUTUBE_TRANSCRIPT_FIXTURES_DIR` | No | - | Local transcript fallback |
+
+## License
+
+See LICENSE file for details.
