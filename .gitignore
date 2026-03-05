@@ -21,3 +21,8 @@ output/
 # Editor backup files
 *~
 *.swp
+
+# Astro / Node
+site/node_modules/
+site/dist/
+site/.astro/

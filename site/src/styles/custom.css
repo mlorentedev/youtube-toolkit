@@ -1,0 +1,52 @@
+/* YouTube-red accent palette */
+:root {
+  --sl-color-accent-low: #3b0a0a;
+  --sl-color-accent: #ff0033;
+  --sl-color-accent-high: #ffb3b3;
+  --sl-color-white: #ffffff;
+  --sl-color-gray-1: #f0f0f4;
+  --sl-color-gray-2: #c4c4cc;
+  --sl-color-gray-3: #8e8e9a;
+  --sl-color-gray-4: #58586a;
+  --sl-color-gray-5: #38384a;
+  --sl-color-gray-6: #1e1e2e;
+  --sl-color-black: #111118;
+}
+
+:root[data-theme='light'] {
+  --sl-color-accent-low: #ffe0e6;
+  --sl-color-accent: #cc0029;
+  --sl-color-accent-high: #5c0013;
+  --sl-color-white: #111118;
+  --sl-color-gray-1: #38384a;
+  --sl-color-gray-2: #58586a;
+  --sl-color-gray-3: #8e8e9a;
+  --sl-color-gray-4: #c4c4cc;
+  --sl-color-gray-5: #e8e8ee;
+  --sl-color-gray-6: #f4f4f8;
+  --sl-color-black: #ffffff;
+}
+
+/* Hero polish */
+.hero {
+  padding-block: clamp(2rem, 8vw, 6rem);
+}
+
+.hero .tagline {
+  max-width: 42ch;
+}
+
+/* Badge-style version indicator */
+.sl-badge {
+  font-family: var(--sl-font-system-mono);
+}
+
+/* Card hover lift */
+.sl-card {
+  transition: transform 0.2s ease, box-shadow 0.2s ease;
+}
+
+.sl-card:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 4px 20px rgb(255 0 51 / 0.12);
+}

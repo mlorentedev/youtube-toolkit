@@ -3,7 +3,10 @@ title: YouTube Toolkit
 description: A Python CLI for multi-channel YouTube analytics and transcript extraction.
 template: splash
 hero:
-  tagline: Analyze multiple YouTube channels at once. Compute engagement metrics, export structured reports, and download transcripts — all from the command line.
+  tagline: Stop clicking through YouTube Studio dashboards one channel at a time. Analyze dozens of channels in a single command — engagement metrics, structured reports, and transcripts, straight from your terminal.
+  image:
+    file: ../../assets/logo.svg
+    alt: YouTube Toolkit logo
   actions:
     - text: Get Started
       link: /youtube-toolkit/getting-started/
@@ -15,33 +18,38 @@ hero:
       variant: minimal
 ---
 
-import { CardGrid, Card } from '@astrojs/starlight/components';
+import { CardGrid, Card, Badge } from '@astrojs/starlight/components';
 
-## Why YouTube Toolkit?
+## The problem
 
-Comparing YouTube channels manually means clicking through Studio dashboards one at a time, copy-pasting numbers into spreadsheets, and losing hours before you can even start analyzing. YouTube Toolkit replaces that workflow with a single command that fetches video data from the YouTube Data API v3, computes engagement metrics, and writes structured reports you can open in any tool.
+Comparing YouTube channels means opening Studio for each one, copy-pasting numbers into a spreadsheet, and writing formulas by hand. By the time you can start analyzing, hours are gone. There is no way to batch-fetch metrics, rank channels against each other, or track trends over time without building your own tooling.
+
+## The solution
+
+YouTube Toolkit wraps the YouTube Data API v3 in a single CLI. Point it at a YAML file of channels, run one command, and get a timestamped folder of reports: CSV for raw data, TXT for human-readable analysis, URL lists for the best and latest content. Every video gets six engagement metrics computed automatically.
 
 ## Features
 
 <CardGrid stagger>
-  <Card title="Multi-Channel Analysis" icon="list-format">
-    Define channels in a YAML file using `@handle`, legacy username, or raw channel ID.
-    One command fetches up to 100 videos per channel with full statistics.
+  <Card title="Multi-Channel Batch Analysis" icon="list-format">
+    Define channels by `@handle`, legacy username, or raw ID in a simple YAML file.
+    One command fetches up to 100 videos per channel with full statistics — batched in
+    groups of 50 to respect API limits.
   </Card>
-  <Card title="Engagement Metrics" icon="bars">
-    Six computed metrics per video: engagement rate, view rate, like rate, comment rate,
-    subscriber-relative engagement, and views per minute. Formulas are transparent and
-    documented.
+  <Card title="Six Engagement Metrics" icon="bars">
+    Engagement rate, view rate, like rate, comment rate, subscriber-relative engagement,
+    and views per minute. Every formula is transparent: `(likes + comments) / views * 100`.
+    No black boxes.
   </Card>
-  <Card title="Structured Reports" icon="document">
-    Every run produces a timestamped folder with CSV data, per-channel stats (top 5 videos,
-    performance distribution), cross-channel trend analysis, and URL lists for the best and
-    latest videos.
+  <Card title="Five Export Formats" icon="document">
+    Every run writes a timestamped folder with CSV data, per-channel stats (top 5 videos,
+    performance distribution), cross-channel trends (duration categories, viral detection),
+    and URL lists for the best and latest videos. Plus a self-documenting README.
   </Card>
   <Card title="Transcript Downloader" icon="translate">
-    Fetch video transcripts with multi-language support and automatic fallback. Preferred
-    languages are configurable; when unavailable, the first available transcript is used.
-    Local fixture files provide an offline fallback.
+    Fetch video transcripts with multi-language support. Tries your preferred languages
+    first, falls back to the first available transcript, and finally checks a local
+    fixtures directory for offline use.
   </Card>
 </CardGrid>
 
@@ -57,7 +65,26 @@ task install
 cp .env.example .env        # Set YOUTUBE_API_KEY
 vi channels.yml             # Add channels to analyze
 
-# Run
-task run:channels            # Analyze channels and generate reports
-task run:video               # Download a video transcript
+# Analyze channels — reports land in output/<timestamp>/
+task run:channels
+
+# Download a single video transcript
+task run:video
 ```
+
+## Built with
+
+<CardGrid>
+  <Card title="Python 3.12+" icon="seti:python">
+    Type-hinted throughout. Modular architecture with clear separation between API, metrics, and export layers.
+  </Card>
+  <Card title="YouTube Data API v3" icon="external">
+    Channel resolution (handle, username, ID), playlist enumeration, batch video statistics.
+  </Card>
+  <Card title="youtube-transcript-api" icon="translate">
+    Multi-language transcript fetch with automatic fallback chain.
+  </Card>
+  <Card title="Task + Poetry" icon="setting">
+    Reproducible builds with Poetry lockfile. Task runner for one-command install, run, and update workflows.
+  </Card>
+</CardGrid>
