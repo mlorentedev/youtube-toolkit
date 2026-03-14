@@ -1,0 +1,7 @@
+# List of YouTube channels to analyze
+# Identify channels by one of: custom_url, username, or channel_id
+
+- custom_url: "@mkbhd"
+- custom_url: "@veritasium"
+- channel_id: "UCBcRF18a7Qf58cCRy5xuWwQ"  # Example: by channel ID
+# - username: "GoogleDevelopers"             # Example: by username

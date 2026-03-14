@@ -1,28 +1,41 @@
-.env
-GEMINI.md
-CLAUDE.md
-.claude/
-channels.yml
-.cache_ggshield
-
 # Python
 __pycache__/
 *.pyc
 *.egg-info/
-.pytest_cache/
 .venv/
-.cache/
-poetry.lock
+dist/
 
-# Generated files
-output/
-*.log
-
-# Editor backup files
-*~
-*.swp
+# Tool caches
+.ruff_cache/
+.mypy_cache/
+.pytest_cache/
+.coverage
+coverage.xml
+htmlcov/
 
 # Astro / Node
 site/node_modules/
 site/dist/
 site/.astro/
+site/.vscode/
+
+# Claude
+.claude/plans/
+
+# Project
+output/
+.env
+channels.yml
+*.log
+
+# Editor
+*~
+*.swp
+
+# Worktrees
+.worktrees/
+
+# Legacy
+poetry.lock
+.cache/
+.cache_ggshield
