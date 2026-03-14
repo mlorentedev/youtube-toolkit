@@ -1,23 +1,33 @@
 """YouTube transcript downloading."""
 
+import logging
 from pathlib import Path
-from typing import List, Optional
-from youtube_transcript_api import YouTubeTranscriptApi, TranscriptsDisabled, NoTranscriptFound
+from typing import Any
 
-from .config import DEFAULT_LANGUAGES, ENV_TRANSCRIPT_FIXTURES, get_env
+from youtube_transcript_api import (
+    NoTranscriptFound,
+    TranscriptsDisabled,
+    YouTubeTranscriptApi,
+)
+
+from .config import get_settings
+
+logger = logging.getLogger(__name__)
 
 
 class YouTubeTranscriptDownloader:
-    def __init__(self, languages: Optional[List[str]] = None):
-        self.languages = languages or DEFAULT_LANGUAGES
+    def __init__(self, languages: list[str] | None = None) -> None:
+        settings = get_settings()
+        self.languages = languages or settings.transcript_languages
         self.client = YouTubeTranscriptApi()
 
     def get_transcript(self, video_id: str) -> str:
+        """Download transcript with multi-language fallback chain."""
         try:
             transcript = self.client.fetch(video_id, languages=self.languages)
             return self._format_transcript(transcript)
         except (TranscriptsDisabled, NoTranscriptFound):
-            print(f"No transcript found in {self.languages}, trying available transcripts...")
+            logger.info("No transcript in %s, trying available transcripts...", self.languages)
             try:
                 available = self.client.list(video_id)
                 chosen = next(iter(available))
@@ -27,43 +37,46 @@ class YouTubeTranscriptDownloader:
                 fallback = self._load_fallback_transcript(video_id)
                 if fallback is not None:
                     return fallback
-                raise RuntimeError(f"No transcript available for this video: {e}")
+                msg = f"No transcript available for this video: {e}"
+                raise RuntimeError(msg) from e
         except Exception as e:
             fallback = self._load_fallback_transcript(video_id)
             if fallback is not None:
                 return fallback
-            raise RuntimeError(f"Unexpected error: {e}")
+            msg = f"Unexpected error fetching transcript: {e}"
+            raise RuntimeError(msg) from e
 
-    def save_transcript(self, video_id: str, output_dir: str = "."):
+    def save_transcript(self, video_id: str, output_dir: str = ".") -> Path:
+        """Download and save transcript to file."""
         text = self.get_transcript(video_id)
-        output_dir = Path(output_dir).expanduser()
-        output_dir.mkdir(parents=True, exist_ok=True)
-        filename = output_dir / f"{video_id}_transcript.txt"
-        with open(filename, "w", encoding="utf-8") as f:
-            f.write(text)
-        print(f"Transcript saved to {filename}")
+        output_path = Path(output_dir).expanduser()
+        output_path.mkdir(parents=True, exist_ok=True)
+        filename = output_path / f"{video_id}_transcript.txt"
+        filename.write_text(text, encoding="utf-8")
+        logger.info("Transcript saved to %s", filename)
+        return filename
 
-    def _format_transcript(self, transcript) -> str:
-        lines = []
+    def _format_transcript(self, transcript: Any) -> str:
+        """Format transcript entries into plain text."""
+        lines: list[str] = []
         for entry in transcript:
             text = (
-                entry.get("text", "")
-                if isinstance(entry, dict)
-                else getattr(entry, "text", "")
+                entry.get("text", "") if isinstance(entry, dict) else getattr(entry, "text", "")
             )
             text = text.strip()
             if text:
                 lines.append(text)
         return "\n".join(lines)
 
-    def _load_fallback_transcript(self, video_id: str) -> Optional[str]:
-        fallback_dir = get_env(ENV_TRANSCRIPT_FIXTURES)
-        if not fallback_dir:
+    def _load_fallback_transcript(self, video_id: str) -> str | None:
+        """Try loading transcript from local fixtures directory."""
+        settings = get_settings()
+        if not settings.youtube_transcript_fixtures_dir:
             return None
 
-        candidate = Path(fallback_dir).expanduser() / f"{video_id}.txt"
+        candidate = Path(settings.youtube_transcript_fixtures_dir).expanduser() / f"{video_id}.txt"
         if candidate.exists() and candidate.is_file():
-            print(f"Using local transcript from {candidate}")
+            logger.info("Using local transcript from %s", candidate)
             content = candidate.read_text(encoding="utf-8").strip()
             return content if content else None
 
