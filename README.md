@@ -108,3 +108,7 @@ See [CONTRIBUTING.md](CONTRIBUTING.md) for details.
 ## License
 
 [MIT](LICENSE)
+
+## Documentation
+
+Project-bound knowledge lives in [`docs/`](docs/) (docs-as-code): ADRs, runbooks, troubleshooting, and lessons.
