@@ -1,5 +1,12 @@
 # Changelog
 
+## [0.2.2](https://github.com/mlorentedev/yt-metrics-cli/compare/v0.2.1...v0.2.2) (2026-06-10)
+
+
+### Documentation
+
+* migrate project-bound knowledge into docs/ (KPM-019) ([#14](https://github.com/mlorentedev/yt-metrics-cli/issues/14)) ([9d4ab4b](https://github.com/mlorentedev/yt-metrics-cli/commit/9d4ab4b3006cb6a6abd59f7bf2fe740993bd14b8))
+
 ## [0.2.1](https://github.com/mlorentedev/yt-metrics-cli/compare/v0.2.0...v0.2.1) (2026-03-15)
 
 
