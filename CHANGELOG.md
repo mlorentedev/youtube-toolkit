@@ -1,5 +1,12 @@
 # Changelog
 
+## [0.2.3](https://github.com/mlorentedev/yt-metrics-cli/compare/v0.2.2...v0.2.3) (2026-06-28)
+
+
+### Documentation
+
+* add lessons on GraphQL rate limits and board persistence ([#37](https://github.com/mlorentedev/yt-metrics-cli/issues/37)) ([718fcab](https://github.com/mlorentedev/yt-metrics-cli/commit/718fcab2c3eb6bd89974de01f6419fb52b826d31))
+
 ## [0.2.2](https://github.com/mlorentedev/yt-metrics-cli/compare/v0.2.1...v0.2.2) (2026-06-10)
 
 
