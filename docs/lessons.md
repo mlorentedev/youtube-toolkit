@@ -68,3 +68,17 @@ owner: manu
 **Solution:** Added `paths: ['site/**']` filter to the push trigger in `pages.yml`. Added `workflow_dispatch` for manual re-deploys. Set `concurrency` group with `cancel-in-progress: true`.
 **Why:** Path-scoped workflows prevent wasted CI minutes and unnecessary deploys. The concurrency group ensures in-progress builds are cancelled when newer commits arrive, keeping the deployed site always reflecting the latest push.
 **Tags:** `#ci` `#github-actions` `#github-pages` `#optimization`
+
+### [2026-06-28] GraphQL Rate Limits Block Board Operations — Use REST Fallback
+**Context:** Migrating backlog items to GitHub issues and adding them to the bitácora board
+**Problem:** `gh project item-add` and `gh project item-edit` use GraphQL internally. Heavy board operations (field resolution, 14 item adds with field sets) exhaust the 5000/hour GraphQL limit, causing silent failures — commands return empty JSON or error, and items appear added but fields don't persist.
+**Solution:** (1) Use `gh api` with REST endpoints for issue/PR operations (`repos/.../issues`, `repos/.../pulls`) — these use the separate 5000/hour REST limit. (2) For board operations, add items first, then set fields in a second pass after a brief pause. (3) Verify items landed by searching by URL, not by ID field (which may not persist on rate-limit failure).
+**Why:** GitHub's GraphQL and REST APIs have independent rate limits. `gh` CLI commands like `gh project` and `gh pr view` use GraphQL; `gh api repos/...` uses REST. When one is exhausted, the other still works. Always have a REST fallback for critical operations.
+**Tags:** `#github` `#graphql` `#rate-limit` `#bitacora` `#gotcha`
+
+### [2026-06-28] `gh project item-add` Can Silently Succeed Without Persisting
+**Context:** Adding 14 yt-metrics-cli issues to the bitácora board
+**Problem:** `gh project item-add` returned valid item IDs and `gh project item-edit` returned no errors, but subsequent `gh project item-list` showed the items were not on the board. The commands succeeded at the API level but the board state didn't reflect it — likely due to GraphQL rate limiting causing partial writes.
+**Solution:** After bulk board operations, verify items actually landed by searching the board list by URL or title. Don't trust the add/edit return codes alone. If verification fails, re-add after rate limit reset.
+**Why:** GraphQL rate limits can cause silent partial failures — the mutation returns a success response but the server-side state doesn't persist. Always verify board state after bulk operations.
+**Tags:** `#github` `#graphql` `#bitacora` `#silent-failure`
