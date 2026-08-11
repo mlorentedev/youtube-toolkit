@@ -1,5 +1,13 @@
 # Changelog
 
+## [0.2.4](https://github.com/mlorentedev/yt-metrics-cli/compare/v0.2.3...v0.2.4) (2026-08-11)
+
+
+### Bug Fixes
+
+* skip add-to-project for dependabot PRs (no secrets access) ([#56](https://github.com/mlorentedev/yt-metrics-cli/issues/56)) ([e7d0e71](https://github.com/mlorentedev/yt-metrics-cli/commit/e7d0e7155207dfa0205292d0c4c65edeedfd9fb0))
+* upgrade cryptography, httplib2, pygments to fix security vulnerabilities ([#61](https://github.com/mlorentedev/yt-metrics-cli/issues/61)) ([ac06258](https://github.com/mlorentedev/yt-metrics-cli/commit/ac062587019f2fce18aac68bce0e9a0d6ef74232))
+
 ## [0.2.3](https://github.com/mlorentedev/yt-metrics-cli/compare/v0.2.2...v0.2.3) (2026-06-28)
 
 
