@@ -15,7 +15,11 @@ jobs:
     # Fork PRs run without repository secrets — BITACORA_PAT would be empty and the
     # job would fail (Codex review on kubelab#237). Skip them; fork PRs reach the
     # board via the rollout backfill or a manual item-add.
-    if: github.event_name == 'issues' || github.event.pull_request.head.repo.fork == false
+    # Dependabot PRs also lack secrets access (GitHub security restriction).
+    if: >
+      github.event_name == 'issues' ||
+      (github.event.pull_request.head.repo.fork == false &&
+       github.actor != 'dependabot[bot]')
     runs-on: ubuntu-latest
     steps:
       # Pin a real release: actions/add-to-project@v1 does NOT resolve (no floating v1 tag).
