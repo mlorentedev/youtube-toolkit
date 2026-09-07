@@ -1,5 +1,17 @@
 # Changelog
 
+## [0.2.5](https://github.com/mlorentedev/yt-metrics-cli/compare/v0.2.4...v0.2.5) (2026-09-07)
+
+
+### Bug Fixes
+
+* **deps:** bump postcss to 8.5.28 in site to close two Dependabot alerts ([#68](https://github.com/mlorentedev/yt-metrics-cli/issues/68)) ([0a43fc8](https://github.com/mlorentedev/yt-metrics-cli/commit/0a43fc82af779b64dfc749298de3f74d6baa3848))
+
+
+### Documentation
+
+* split lessons.md into one file per lesson under docs/lessons/ ([#67](https://github.com/mlorentedev/yt-metrics-cli/issues/67)) ([f2ce86c](https://github.com/mlorentedev/yt-metrics-cli/commit/f2ce86c92d07eb1cf8424a344fc9596330c47a18))
+
 ## [0.2.4](https://github.com/mlorentedev/yt-metrics-cli/compare/v0.2.3...v0.2.4) (2026-08-11)
 
 
